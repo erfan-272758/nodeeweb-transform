@@ -15,6 +15,6 @@ export function parseSSHConfig(opts) {
     host: url.hostname,
     port: +(url.port || 22),
     username: url.username,
-    password: url.password,
+    password: decodeURIComponent(url.password),
   };
 }

@@ -12,25 +12,18 @@ export default function remoteExecute(
   return new Promise((resolve, reject) => {
     conn
       .on("ready", () => {
-        logger(chalk.green("Client :: ready"));
+        logger(chalk.green("ssh connected"));
+        logger(chalk.yellow(cmd));
         conn.exec(cmd, (err, stream) => {
           if (err) throw err;
           stream
             .on("close", (code, signal) => {
               if (code === 0) {
-                logger(
-                  chalk.gray(
-                    "Stream :: close :: code: " + code + ", signal: " + signal
-                  )
-                );
+                logger(chalk.gray("ssh closed"));
                 conn.end();
                 return resolve(data);
               } else {
-                logger(
-                  chalk.red(
-                    "Stream :: close :: code: " + code + ", signal: " + signal
-                  )
-                );
+                logger(chalk.red("ssh closed"));
                 conn.end();
                 return reject(data);
               }
@@ -40,7 +33,7 @@ export default function remoteExecute(
               logger(chalk.gray(msg));
             })
             .stderr.on("data", (err) => {
-              logger(chalk.red(String(err)));
+              logger(chalk.gray(String(err)));
             });
         });
       })
